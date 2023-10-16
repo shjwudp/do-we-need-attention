@@ -1,0 +1,4 @@
+git+https://github.com/shjwudp/S5.git@package
+git+https://github.com/shjwudp/safari.git@package
+lightning
+hydra
