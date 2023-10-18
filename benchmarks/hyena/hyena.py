@@ -2,6 +2,8 @@ import torch
 import torch.nn.functional as F
 import lightning.pytorch as pl
 from einops import rearrange
+from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import apply_activation_checkpointing
+
 
 from safari.models.sequence.simple_lm import SimpleLMHeadModel
 
@@ -11,6 +13,12 @@ class Hyena(pl.LightningModule):
         super().__init__()
         self.lr = lr
         self.hyena = SimpleLMHeadModel(**kwargs)
+
+        def skip_lm_head(layer):
+            flag = layer is self.hyena.lm_head
+            return not flag
+
+        apply_activation_checkpointing(self.hyena, check_fn=skip_lm_head)
 
     def _step(self, batch, batch_idx):
         inputs, targets = batch
@@ -31,7 +39,7 @@ class Hyena(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         loss = self._step(batch, batch_idx)
 
-        self.log("train_loss", loss)
+        self.log("train_loss", loss, prog_bar=True)
 
         return loss
     

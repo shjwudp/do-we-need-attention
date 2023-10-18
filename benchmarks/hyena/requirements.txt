@@ -1,4 +1,6 @@
 git+https://github.com/shjwudp/S5.git@package
 git+https://github.com/shjwudp/safari.git@package
 lightning
-hydra
+hydra-core
+requests>=2.31.0
+numexpr>=2.8.7

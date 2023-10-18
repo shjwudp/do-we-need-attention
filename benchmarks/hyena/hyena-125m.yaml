@@ -16,7 +16,7 @@ model:
     pad_vocab_size_multiple: 1
     layer:
       _name_: "hyena"
-      l_max: ${eval:'${dataset.1} + 2'}
+      l_max: ${eval:'${dataset.input_seq_len} + 2'}
       order: 4
       filter_order: 64
       num_heads: 1
@@ -41,18 +41,15 @@ learning_rate:
   base: 1e-4
   scheduler: "inverse_sqrt"
   num_warmup_steps: 100
+accumulate_grad_batches: 32
 
 dataset:
   type: "icl_synthetics"
   data_dir: "./icl_synthetics"
-  num_examples: 40000
+  num_examples: 4000
   num_test_examples: 500
   vocab_size: 30
   input_seq_len: 131072
   copy_method: "assoc_recall"
+  batch_size: 1
   seed: 0
-
-batch_size_plan:
-- batch_size: 32
-  n_step_of_gradient_accumulation: 32
-  training_nsteps: -1
